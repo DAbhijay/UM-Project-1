@@ -6,13 +6,13 @@ const serviceRoutes = require('./routes/serviceRoutes');
 const app = express();
 
 // ─── Middleware ──────────────────────────────────────────────
-app.use(cors());                           // Allow frontend to call API
-app.use(express.json());                   // Parse JSON request bodies
+app.use(cors());
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ─── API Routes ──────────────────────────────────────────────
-app.use('/api/auth', authRoutes);          // Authentication routes
-app.use('/api/services', serviceRoutes);   // Service request routes
+app.use('/api/auth', authRoutes);
+app.use('/api/services', serviceRoutes);
 
 // ─── Health Check Endpoint ───────────────────────────────────
 app.get('/', (req, res) => {
