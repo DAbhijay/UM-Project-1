@@ -1,5 +1,5 @@
 const serviceService                        = require('../services/serviceService');
-const { successResponse, errorResponse }    = require('../utils/AppError');
+const { successResponse, errorResponse }    = require('../utils/response');
 
 exports.createRequest = async (req, res) => {
     try{
