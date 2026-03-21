@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
+const providerRoutes = require('./routes/providerRoutes');
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 // ─── API Routes ──────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
 app.use('/api/services', serviceRoutes);
+app.use('/api/providers', providerRoutes);
 
 // ─── Health Check Endpoint ───────────────────────────────────
 app.get('/', (req, res) => {
