@@ -32,8 +32,8 @@ CREATE TABLE users (
     role                user_role       NOT NULL DEFAULT 'customer',
     phone               VARCHAR(15)     UNIQUE,
     address             TEXT,
-    created_at          TIMESTAMPZ NOT NULL DEFAULT NOW(),
-    updated_at          TIMESTAMPZ NOT NULL DEFAULT NOW()
+    created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- Fast Login 
@@ -54,8 +54,8 @@ CREATE TABLE service_providers (
     bio                 TEXT,
     avg_rating          NUMERIC(3,1)    NOT NULL DEFAULT 0.0 CHECK (avg_rating >= 0 AND avg_rating <= 5),
 
-    created_at          TIMESTAMPZ NOT NULL DEFAULT NOW(),
-    updated_at          TIMESTAMPZ NOT NULL DEFAULT NOW()
+    created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- The two columns the search page filters on most
@@ -74,11 +74,11 @@ CREATE TABLE service_requests (
     service_type        service_type    NOT NULL,
     description         TEXT            NOT NULL,
     address             TEXT            NOT NULL,
-    status              request_status  NOT NULL DEFAULT '{PENDING',
+    status              request_status  NOT NULL DEFAULT 'PENDING',
 
-    scheduled_at        TIMESTAMPZ,
-    created_at          TIMESTAMPZ NOT NULL DEFAULT NOW(),
-    updated_at          TIMESTAMPZ NOT NULL DEFAULT NOW()
+    scheduled_at        TIMESTAMPTZ,
+    created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- PROVIDER AND CUSTOMER DASHBOARD
@@ -95,21 +95,23 @@ CREATE INDEX idx_requests_status        ON service_requests (status);
 
 CREATE TABLE availability (
     id                  UUID            DEFAULT uuid_generate_v4() PRIMARY KEY,
-    provider_id          UUID            NOT NULL REFERENCES service_providers(id) ON DELETE CASCADE,
+    provider_id         UUID            NOT NULL REFERENCES service_providers(id) ON DELETE CASCADE,
 
     date                DATE            NOT NULL,
     start_time          TIME            NOT NULL,
     end_time            TIME            NOT NULL,
     is_booked           BOOLEAN         NOT NULL DEFAULT FALSE,
 
-    created_at          TIMESTAMPZ NOT NULL DEFAULT NOW()
+    created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     -- CONSTRAINTS
     CONSTRAINT uq_availability UNIQUE (provider_id, date, start_time),
     CONSTRAINT chk_time_order CHECK (end_time > start_time) 
 );
 
-CREATE INDEX idx_availability_provider_date ON availability (provider_id, date, is_booked);
+CREATE INDEX idx_availability_provider_date ON availability (provider_id, date);
+CREATE INDEX idx_availability_booked        ON availability (is_booked);
 
 -- REVIEWS
 
@@ -121,7 +123,7 @@ CREATE TABLE reviews (
 
     rating              SMALLINT        NOT NULL CHECK (rating BETWEEN 1 AND 5),
     comment             TEXT,
-    created_at          TIMESTAMPZ      NOT NULL DEFAULT NOW()
+    created_at          TIMESTAMPTZ      NOT NULL DEFAULT NOW()
 );
 
 -- PROVIDER INDEX
