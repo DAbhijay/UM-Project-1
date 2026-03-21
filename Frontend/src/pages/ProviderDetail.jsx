@@ -38,7 +38,7 @@ const ProviderDetail = () => {
         navigate('/book', {
             state: {
                 providerId: id,
-                serviceType: service_type,
+                serviceType: provider.service_type,
             }
         });
     };
