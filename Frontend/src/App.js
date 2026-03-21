@@ -14,65 +14,69 @@ import MyBookings from './pages/MyBookings';
 import LoadingSpinner from './components/LoadingSpinner';
 
 const ProtectedRoute = ({ children }) => {
-    const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
 
-    if (loading) {
-        return <LoadingSpinner />
-    }
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
-    return isAuthenticated ? children : <Navigate to="/login" />
+  return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
 const AppRoutes = () => {
-    const { loading } = useAuth();
+  const { loading } = useAuth();
 
-    if (loading) {
-        return <LoadingSpinner message="Loading application..." />
-    }
+  if (loading) {
+    return <LoadingSpinner message="Loading application..." />;
+  }
 
-    return (
-        <div style={{
-            minHeight: '100vh',
-            display: 'flex',
-            flexDirection: 'column'
-        }}>
-            <Navbar />
-            <main style={{ flex: 1 }}>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/providers" element={<ProviderList />} />
-                    <Route path="/providers/:id" element={<ProviderDetail />} />
-
-                    <Route path="/book"
-                    element={
-                        <ProtectedRoute>
-                            <BookingForm />
-                        </ProtectedRoute>
-                    } />
-
-                    <Route path="/my-bookings"
-                    element={
-                        <ProtectedRoute>
-                            <MyBookings />
-                        </ProtectedRoute>
-                    } />
-                </Routes>
-            </main>
-            <Footer />
-        </div>
-    );
+  return (
+    <div style={{ 
+      minHeight: '100vh', 
+      display: 'flex', 
+      flexDirection: 'column' 
+    }}>
+      <Navbar />
+      <main style={{ flex: 1 }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/providers" element={<ProviderList />} />
+          <Route path="/providers/:id" element={<ProviderDetail />} />
+          
+          <Route 
+            path="/book" 
+            element={
+              <ProtectedRoute>
+                <BookingForm />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/my-bookings" 
+            element={
+              <ProtectedRoute>
+                <MyBookings />
+              </ProtectedRoute>
+            } 
+          />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
+  );
 };
 
 function App() {
-    return (
-        <BrowserRouter>
-            <AuthProvider>
-                <AppRoutes />
-            </AuthProvider>
-        </BrowserRouter>
-    );
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </BrowserRouter>
+  );
 }
 
 export default App;

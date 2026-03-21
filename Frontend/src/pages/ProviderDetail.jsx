@@ -20,7 +20,7 @@ const ProviderDetail = () => {
         setLoading(true);
 
         try {
-            constResponse = await serviceApi.getProviderDetails(id);
+            const response = await serviceApi.getProviderDetails(id);
             setProvider(response.data);
         } catch (err) {
             setError('Failed to load provider details');

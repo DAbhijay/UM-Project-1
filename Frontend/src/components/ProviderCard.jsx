@@ -21,7 +21,7 @@ const ProviderCard = ({provider}) => {
                 </div>
             </div>
 
-            <h3 style={style.name}> {provider.user?.full_name} </h3>
+            <h3 style={styles.name}> {provider.user?.full_name} </h3>
 
             <div style={styles.badge}>
                 {provider.service_type}

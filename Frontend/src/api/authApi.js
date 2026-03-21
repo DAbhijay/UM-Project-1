@@ -1,27 +1,26 @@
-import axios from '../api/axiosConfig';
+import axios from './axiosConfig';
 
 export const authApi = {
-    // Register
-    register: async (userData) =>{
-     await axios.post('/api/auth/register', userData);
+  register: async (userData) => {
+    const response = await axios.post('/api/auth/register', userData);
     return response.data;
-    },
+  },
 
-    // Login
-    login: async (credentials) =>{
-     await axios.post('/api/auth/login', credentials);
+  login: async (credentials) => {
+    const response = await axios.post('/api/auth/login', credentials);
     return response.data;
-    },
+  },
 
-    // Get Profile
-    getProfile: async () =>{
-     await axios.get('/api/auth/me');
+  getProfile: async () => {
+    const response = await axios.get('/api/auth/me');
     return response.data;
-    },
+  },
 
-    // Complete Provider Profile
-    completeProviderProfile: async (profileData) =>{
-     await axios.post('/api/auth/complete-provider-profile', profileData);
+  completeProviderProfile: async (profileData) => {
+    const response = await axios.post(
+      '/api/auth/complete-provider-profile',
+      profileData
+    );
     return response.data;
-    },
-}
+  },
+};
