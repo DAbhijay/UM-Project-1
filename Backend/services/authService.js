@@ -8,11 +8,11 @@ const AppError = require('../utils/AppError');
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES = process.env.JWT_EXPIRES || '7d';
 
-function generateToken (userId, role) {
+function generateToken(userId, role) {
     return jwt.sign(
-        { id: userId,role },
+        { id: userId, role },
         JWT_SECRET,
-        { expiresIn: JWT_EXPIRES  }
+        { expiresIn: JWT_EXPIRES }
     );
 }
 
@@ -25,29 +25,41 @@ exports.registerUser = async ({ email, password, full_name, role }) => {
         throw new AppError('Email, Password, Full Name are required', 400);
     }
     if (password.length < 6) {
-        throw new AppError('Password must be 6 characters long', 400);
+        throw new AppError('Password must be at least 6 characters long', 400);
     }
 
     // Duplicate Check
     const existing = await User.findOne({ where: { email } });
     if (existing) {
         throw new AppError('Email already registered', 409);
-    }    
+    }
 
     // Hash the password
     const password_hash = await bcrypt.hash(password, 10);
 
     // Persist
-    const safeRole = ['customer', 'provider'].include(role) ? role: 'customer';
+    const safeRole = ['customer', 'provider'].includes(role) ? role : 'customer';
 
-    const user = await User.create ({
+    const user = await User.create({
         email,
-        password,
+        password_hash,
         full_name,
         role: safeRole
     });
 
-    return user;
+    // Generate token
+    const token = generateToken(user.id, user.role);
+
+    // Return user without password_hash
+    const userResponse = {
+        id: user.id,
+        email: user.email,
+        full_name: user.full_name,
+        role: user.role,
+        created_at: user.created_at
+    };
+
+    return { user: userResponse, token };
 };
 
 // ─── login ──────────────────────────────────────────────────
@@ -64,15 +76,23 @@ exports.loginUser = async ({ email, password }) => {
 
     // Compare password
     const passwordMatch = user
-    ? await bcrypt.compare(password, user.password_hash)
-    : false;
+        ? await bcrypt.compare(password, user.password_hash)
+        : false;
 
-    if (!User || !passwordMatch) {
+    if (!user || !passwordMatch) {
         throw new AppError('Invalid email or password', 401);
     }
 
     // Issue token
     const token = generateToken(user.id, user.role);
 
-    return { user, token };
+    // Return user without password_hash
+    const userResponse = {
+        id: user.id,
+        email: user.email,
+        full_name: user.full_name,
+        role: user.role
+    };
+
+    return { user: userResponse, token };
 };

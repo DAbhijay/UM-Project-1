@@ -134,7 +134,7 @@ exports.updateStatus = async ({ requestId, newStatus, providerId, availabilitySl
         const slot = await Availability.findOne({
             where: {
                 id:         availabilitySlotId,
-                providerId: provider.id,
+                provider_id: provider.id,
                 is_booked:  false
             }
         });
