@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { serviceApi } from '../api/serviceApi';
 import ProviderCard from '../components/ProviderCard';
@@ -13,7 +13,22 @@ const ProviderList = () => {
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState('');
 
-    useEffect(() => { fetchProviders() }, [serviceType]);
+    useEffect(() => {
+        const fetchProviders = async () => {
+            setLoading(true);
+            try {
+                const response = await serviceApi.getProviders(serviceType);
+                setProviders(response.data || []);
+            } catch (err) {
+                setError('Failed to load providers');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        fetchProviders();
+    }, [serviceType]);
 
     const fetchProviders = async () => {
         setLoading(true);

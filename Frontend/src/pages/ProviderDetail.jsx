@@ -14,7 +14,22 @@ const ProviderDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    useEffect(() => { fetchProviderDetails() }, [id]);
+    useEffect(() => {
+        const fetchProviderDetails = async () => {
+            setLoading(true);
+            try {
+                const response = await serviceApi.getProviderDetails(id);
+                setProvider(response.data);
+            } catch (err) {
+                setError('Failed to load provider details');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        fetchProviderDetails();
+    }, [id]);
 
     const fetchProviderDetails = async () => {
         setLoading(true);

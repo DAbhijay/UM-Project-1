@@ -10,7 +10,7 @@ const BookingForm = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const { providerId, serviceType } = location.state || {};
+    const { serviceType } = location.state || {};
     const [ success, setSuccess] = useState(false);
 
     const [ formData, setFormData ] = useState({
