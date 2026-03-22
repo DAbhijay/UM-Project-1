@@ -9,6 +9,9 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES = process.env.JWT_EXPIRES || '7d';
 
 function generateToken(userId, role) {
+    if (!JWT_SECRET) {
+        throw new AppError('Server configuration error', 500);
+    }
     return jwt.sign(
         { id: userId, role },
         JWT_SECRET,

@@ -11,8 +11,8 @@ export const AuthProvider = ({ children }) => {
         const loadUser = async () => {
             if (token) {
                 try {
-                    const response = await authApi.getProfile();
-                    setUser(response.data);
+                    const body = await authApi.getProfile();
+                    setUser(body.data?.user ?? null);
                 } catch (error) {
                     console.error('Failed to load data: ',error);
                     logout();
