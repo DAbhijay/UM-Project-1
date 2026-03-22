@@ -11,19 +11,35 @@ for (const key of requiredEnv) {
 
 const { sequelize } = require('./models');
 
-async function start() {
-  try {
-    await sequelize.authenticate();
-    console.log('Database connection OK.');
-  } catch (err) {
-    console.error('Database connection failed:', err.message);
-    if (/password authentication failed/i.test(String(err.message))) {
-      console.error(
-        'Hint: The password in DATABASE_URL does not match Neon. In the Neon dashboard open your project → Connection details → copy the full URI (or reset the database password and paste the new connection string into Render).'
-      );
+async function connectDbWithRetries(maxAttempts = 6, delayMs = 2000) {
+  let lastErr;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      await sequelize.authenticate();
+      console.log('Database connection OK.');
+      return;
+    } catch (err) {
+      lastErr = err;
+      const msg = String(err.message);
+      if (/password authentication failed/i.test(msg)) {
+        console.error('Database connection failed:', msg);
+        console.error(
+          'Fix: Render → DATABASE_URL must match Neon → Connection details (copy full URI; reset password if needed).'
+        );
+        process.exit(1);
+      }
+      console.error(`Database connect attempt ${attempt}/${maxAttempts}:`, msg);
+      if (attempt < maxAttempts) {
+        await new Promise((r) => setTimeout(r, delayMs));
+      }
     }
-    process.exit(1);
   }
+  console.error('Database connection failed after retries:', lastErr?.message);
+  process.exit(1);
+}
+
+async function start() {
+  await connectDbWithRetries();
 
   const app = require('./app');
   const PORT = process.env.PORT || 5000;
