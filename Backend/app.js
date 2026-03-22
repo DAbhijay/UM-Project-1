@@ -7,7 +7,18 @@ const providerRoutes = require('./routes/providerRoutes');
 const app = express();
 
 // ─── Middleware ──────────────────────────────────────────────
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'https://um-project-1.vercel.app',
+    'https://*.vercel.app'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
