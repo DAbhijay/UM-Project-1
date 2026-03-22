@@ -29,7 +29,7 @@ const Register = () => {
     e.preventDefault();
     setError('');
  
-    if (formData.password !== formData.confirmPassword) {
+    if (formData.password !== formData.confirm_password) {
       setError('Passwords do not match');
       return;
     }
