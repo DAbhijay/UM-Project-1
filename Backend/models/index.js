@@ -1,17 +1,7 @@
 const { Sequelize } = require('sequelize');
-const dbConfig  = require('../config/database');
 
 // ── 1. connection ───────────────────────────────────────────
-const sequelize = new Sequelize(
-  dbConfig.database,
-  dbConfig.username,
-  dbConfig.password,
-  {
-    host:     dbConfig.host,
-    dialect:  'postgres',
-    logging:  process.env.NODE_ENV === 'development' ? console.log : false
-  }
-);
+const sequelize = require('../config/database');
 
 // ── 2. import & register models ─────────────────────────────
 const User            = require('./User')(sequelize);
