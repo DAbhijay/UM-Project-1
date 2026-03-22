@@ -55,7 +55,8 @@ app.use((req, res) => {
 // ─── Error Handler ───────────────────────────────────────────
 app.use((err, req, res, next) => {
   console.error('Error:', err);
-  res.status(err.statusCode || 500).json({
+  const status = Number(err.status || err.statusCode) || 500;
+  res.status(status).json({
     success: false,
     message: err.message || 'Internal server error'
   });

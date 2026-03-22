@@ -1,13 +1,23 @@
 import axios from './axiosConfig';
 
+const json = { 'Content-Type': 'application/json' };
+
 export const authApi = {
   register: async (userData) => {
-    const response = await axios.post('/api/auth/register', userData);
+    const response = await axios.post(
+      '/api/auth/register',
+      JSON.stringify(userData),
+      { headers: json }
+    );
     return response.data;
   },
 
   login: async (credentials) => {
-    const response = await axios.post('/api/auth/login', credentials);
+    const response = await axios.post(
+      '/api/auth/login',
+      JSON.stringify(credentials),
+      { headers: json }
+    );
     return response.data;
   },
 
@@ -19,7 +29,8 @@ export const authApi = {
   completeProviderProfile: async (profileData) => {
     const response = await axios.post(
       '/api/auth/complete-provider-profile',
-      profileData
+      JSON.stringify(profileData),
+      { headers: json }
     );
     return response.data;
   },

@@ -1,8 +1,14 @@
 import axios from './axiosConfig';
 
+const json = { 'Content-Type': 'application/json' };
+
 export const serviceApi = {
   createRequest: async (requestData) => {
-    const response = await axios.post('/api/services', requestData);
+    const response = await axios.post(
+      '/api/services',
+      JSON.stringify(requestData),
+      { headers: json }
+    );
     return response.data;
   },
 
