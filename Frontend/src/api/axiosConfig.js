@@ -27,7 +27,12 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401) {
+        const status = error.response?.status;
+        const url = String(error.config?.url || '');
+        const isAuthForm =
+            url.includes('/api/auth/login') || url.includes('/api/auth/register');
+        // Failed login/register returns 401/400 — do not redirect or clear storage
+        if (status === 401 && !isAuthForm) {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             window.location.href = '/login';

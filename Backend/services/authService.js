@@ -1,12 +1,25 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { User } = require('../models');
+const { User, Sequelize } = require('../models');
 const AppError = require('../utils/AppError');
 
 // ─── helpers ──────────────────────────────────────────────────
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES = process.env.JWT_EXPIRES || '7d';
+
+function normalizeEmail(email) {
+    if (email == null || typeof email !== 'string') return email;
+    return email.trim().toLowerCase();
+}
+
+/** Match stored email case-insensitively (Postgres emails are case-sensitive by default). */
+function emailMatchWhere(normalizedEmail) {
+    return Sequelize.where(
+        Sequelize.fn('LOWER', Sequelize.col('email')),
+        normalizedEmail
+    );
+}
 
 function generateToken(userId, role) {
     if (!JWT_SECRET) {
@@ -23,6 +36,8 @@ function generateToken(userId, role) {
 
 exports.registerUser = async ({ email, password, full_name, role }) => {
 
+    email = normalizeEmail(email);
+
     // Input Validation
     if (!email || !password || !full_name) {
         throw new AppError('Email, Password, Full Name are required', 400);
@@ -32,7 +47,7 @@ exports.registerUser = async ({ email, password, full_name, role }) => {
     }
 
     // Duplicate Check
-    const existing = await User.findOne({ where: { email } });
+    const existing = await User.findOne({ where: emailMatchWhere(email) });
     if (existing) {
         throw new AppError('Email already registered', 409);
     }
@@ -69,13 +84,15 @@ exports.registerUser = async ({ email, password, full_name, role }) => {
 
 exports.loginUser = async ({ email, password }) => {
 
+    email = normalizeEmail(email);
+
     // Validate presence
     if (!email || !password) {
         throw new AppError('Email and Password are required', 400);
     }
 
-    // Find user
-    const user = await User.findOne({ where: { email } });
+    // Find user (case-insensitive so login matches how you typed email at signup)
+    const user = await User.findOne({ where: emailMatchWhere(email) });
 
     // Compare password
     const passwordMatch = user

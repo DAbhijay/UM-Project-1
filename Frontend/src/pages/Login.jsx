@@ -27,7 +27,10 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await login(formData);
+      await login({
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
+      });
       navigate('/');
     } catch (err) {
       setError(

@@ -43,8 +43,8 @@ const Register = () => {
     
     try {
       await register({
-        full_name: formData.full_name,
-        email: formData.email,
+        full_name: formData.full_name.trim(),
+        email: formData.email.trim().toLowerCase(),
         password: formData.password,
         role: formData.role,
       });
