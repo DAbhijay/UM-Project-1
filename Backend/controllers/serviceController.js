@@ -19,14 +19,37 @@ exports.createRequest = async (req, res) => {
     }
 };
 
-exports.getMyRequests = async (req,res) => {
-    try {
-        const requests = await serviceService.getRequestByUser(req.user.id, req.user.role);
+exports.getMyRequests = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userRole = req.user.role;
 
-        return successResponse(res, 200, 'Service requests fetched', requests);
-    } catch (err) {
-        return errorResponse(res,err);
+    let whereClause = {};
+    
+    if (userRole === 'customer') {
+      whereClause.customer_id = userId;
+    } else if (userRole === 'provider') {
+      const provider = await ServiceProvider.findOne({ where: { user_id: userId } });
+      if (!provider) {
+        return res.status(404).json({ success: false, message: 'Provider profile not found' });
+      }
+      whereClause.provider_id = provider.id;
     }
+
+    const requests = await ServiceRequest.findAll({
+      where: whereClause,
+      include: [
+        { model: User, as: 'customer', attributes: ['id', 'full_name', 'email', 'phone'] },
+        { model: ServiceProvider, as: 'provider', include: [{ model: User, as: 'user', attributes: ['full_name'] }] }
+      ],
+      order: [['created_at', 'DESC']]
+    });
+
+    return res.status(200).json({ success: true, data: requests });
+  } catch (error) {
+    console.error('Error fetching service requests:', error);
+    return res.status(500).json({ success: false, message: 'Failed to fetch service requests' });
+  }
 };
 
 exports.getRequestById = async (req,res) => {

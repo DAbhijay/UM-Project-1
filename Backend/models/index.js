@@ -15,10 +15,10 @@ const Review          = require('./Review')(sequelize);
 User.hasOne(ServiceProvider,  { foreignKey: 'user_id', as: 'providerProfile' });
 ServiceProvider.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 
-User.hasMany(ServiceRequest, { foreignKey: 'customer_id', as: 'myRequests' });
+User.hasMany(ServiceRequest, { foreignKey: 'customer_id', as: 'customerRequests' });
 ServiceRequest.belongsTo(User, { foreignKey: 'customer_id', as: 'customer' });
 
-ServiceProvider.hasMany(ServiceRequest, { foreignKey: 'provider_id', as: 'assignedRequests' });
+ServiceProvider.hasMany(ServiceRequest, { foreignKey: 'provider_id', as: 'providerRequests' });
 ServiceRequest.belongsTo(ServiceProvider, { foreignKey: 'provider_id', as: 'provider' });
 
 ServiceProvider.hasMany(Availability, { foreignKey: 'provider_id', as: 'slots' });
