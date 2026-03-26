@@ -125,7 +125,7 @@ const BookingForm = () => {
                             type="date"
                             name="preferred_date"
                             className="form-input"
-                            value={formData.preferred_date}
+                            value={formData.scheduled_at}
                             onChange={handleChange}
                             required
                             min={new Date().toISOString().split('T')[0]}
@@ -138,7 +138,7 @@ const BookingForm = () => {
                             type="time"
                             name="preferred_time"
                             className="form-input"
-                            value={formData.preferred_time}
+                            value={formData.scheduleDateTime}
                             onChange={handleChange}
                             required
                         />

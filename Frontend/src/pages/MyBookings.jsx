@@ -149,8 +149,8 @@ const MyBookings = () => {
                 <div>
                   <span>🕐 Time</span>
                   <span>
-                    {booking.scheduled_at 
-                      ? new Date(booking.scheduled_at).toLocaleTimeString('en-US', {
+                    {booking.scheduledDateTime 
+                      ? new Date(booking.scheduledDateTime).toLocaleTimeString('en-US', {
                           hour: '2-digit',
                           minute: '2-digit'
                         })
