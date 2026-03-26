@@ -11,9 +11,9 @@ const BookingForm = () => {
     const [error, setError] = useState('');
 
     const { serviceType } = location.state || {};
-    const [ success, setSuccess] = useState(false);
+    const [success, setSuccess] = useState(false);
 
-    const [ formData, setFormData ] = useState({
+    const [formData, setFormData] = useState({
         service_type: serviceType || 'electrician',
         description: '',
         address: '',
@@ -34,11 +34,23 @@ const BookingForm = () => {
         setLoading(true);
 
         try {
-            await serviceApi.createRequest(formData);
+            // Combine date and time into scheduled_at
+            const scheduledDateTime = formData.preferred_date && formData.preferred_time 
+                ? new Date(`${formData.preferred_date}T${formData.preferred_time}`).toISOString()
+                : null;
+
+            const bookingData = {
+                service_type: formData.service_type,
+                description: formData.description,
+                address: formData.address,
+                scheduled_at: scheduledDateTime  // ← Send combined datetime
+            };
+
+            await serviceApi.createRequest(bookingData);
             setSuccess(true);
             setTimeout(() => {
                 navigate('/my-bookings');
-            },2000);
+            }, 2000);
         } catch (err) {
             setError(
                 err.response?.data?.message || 'Failed to create booking request'
@@ -56,7 +68,7 @@ const BookingForm = () => {
         return (
             <div className='container' style={{ paddingTop: '40px' }}>
                 <div className='alert alert-success'>
-                    Booking successfully created! Redirecting to your booking...
+                    Booking successfully created! Redirecting to your bookings...
                 </div>
             </div>
         );
@@ -78,86 +90,86 @@ const BookingForm = () => {
                     <div className="form-group">
                         <label className="form-label">Service Type</label>
                         <select
-                        name="service_type"
-                        className="form-input"
-                        value={formData.service_type}
-                        onChange={handleChange}
-                        required
+                            name="service_type"
+                            className="form-input"
+                            value={formData.service_type}
+                            onChange={handleChange}
+                            required
                         >
-                        <option value="electrician">Electrician</option>
-                        <option value="plumber">Plumber</option>
-                        <option value="carpenter">Carpenter</option>
-                        <option value="tailor">Tailor</option>
-                        <option value="maintenance">Maintenance</option>
+                            <option value="electrician">Electrician</option>
+                            <option value="plumber">Plumber</option>
+                            <option value="carpenter">Carpenter</option>
+                            <option value="tailor">Tailor</option>
+                            <option value="maintenance">Maintenance</option>
                         </select>
                     </div>
             
                     <div className="form-group">
                         <label className="form-label">Description</label>
                         <textarea
-                        name="description"
-                        className="form-input"
-                        value={formData.description}
-                        onChange={handleChange}
-                        required
-                        rows="4"
-                        placeholder="Describe the work you need done..."
+                            name="description"
+                            className="form-input"
+                            value={formData.description}
+                            onChange={handleChange}
+                            required
+                            rows="4"
+                            placeholder="Describe the work you need done..."
                         />
                     </div>
             
                     <div className="form-group">
                         <label className="form-label">Service Address</label>
                         <textarea
-                        name="address"
-                        className="form-input"
-                        value={formData.address}
-                        onChange={handleChange}
-                        required
-                        rows="3"
-                        placeholder="Enter your complete address..."
+                            name="address"
+                            className="form-input"
+                            value={formData.address}
+                            onChange={handleChange}
+                            required
+                            rows="3"
+                            placeholder="Enter your complete address..."
                         />
                     </div>
             
                     <div style={styles.dateTimeGrid}>
                         <div className="form-group">
-                        <label className="form-label">Preferred Date</label>
-                        <input
-                            type="date"
-                            name="preferred_date"
-                            className="form-input"
-                            value={formData.scheduled_at}
-                            onChange={handleChange}
-                            required
-                            min={new Date().toISOString().split('T')[0]}
-                        />
+                            <label className="form-label">Preferred Date</label>
+                            <input
+                                type="date"
+                                name="preferred_date"
+                                className="form-input"
+                                value={formData.preferred_date}
+                                onChange={handleChange}
+                                required
+                                min={new Date().toISOString().split('T')[0]}
+                            />
                         </div>
             
                         <div className="form-group">
-                        <label className="form-label">Preferred Time</label>
-                        <input
-                            type="time"
-                            name="preferred_time"
-                            className="form-input"
-                            value={formData.scheduleDateTime}
-                            onChange={handleChange}
-                            required
-                        />
+                            <label className="form-label">Preferred Time</label>
+                            <input
+                                type="time"
+                                name="preferred_time"
+                                className="form-input"
+                                value={formData.preferred_time}
+                                onChange={handleChange}
+                                required
+                            />
                         </div>
                     </div>
             
                     <div style={styles.buttonGroup}>
                         <button
-                        type="button"
-                        className="btn btn-secondary"
-                        onClick={() => navigate(-1)}
+                            type="button"
+                            className="btn btn-secondary"
+                            onClick={() => navigate(-1)}
                         >
-                        Cancel
+                            Cancel
                         </button>
                         <button
-                        type="submit"
-                        className="btn btn-primary"
+                            type="submit"
+                            className="btn btn-primary"
                         >
-                        Submit Booking
+                            Submit Booking
                         </button>
                     </div>
                 </form>
