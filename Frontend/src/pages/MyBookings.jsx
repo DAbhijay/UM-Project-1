@@ -133,16 +133,29 @@ const MyBookings = () => {
                 </div>
                 
                 <div style={styles.detailItem}>
-                  <span style={styles.detailLabel}>📅 Date</span>
-                  <span style={styles.detailValue}>
-                    {formatDate(booking.preferred_date)}
+                  <span>📅 Date</span>
+                  <span>
+                    {booking.scheduled_at 
+                      ? new Date(booking.scheduled_at).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })
+                      : 'Not scheduled'
+                    }
                   </span>
                 </div>
- 
-                <div style={styles.detailItem}>
-                  <span style={styles.detailLabel}>🕐 Time</span>
-                  <span style={styles.detailValue}>
-                    {formatTime(booking.preferred_time)}
+
+                <div>
+                  <span>🕐 Time</span>
+                  <span>
+                    {booking.scheduled_at 
+                      ? new Date(booking.scheduled_at).toLocaleTimeString('en-US', {
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })
+                      : 'Not scheduled'
+                    }
                   </span>
                 </div>
               </div>
